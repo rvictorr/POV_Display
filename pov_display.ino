@@ -1,7 +1,7 @@
-#include <array>
-
 #include <interrupt.h>
+
 #include "button.h"
+#include "display.h"
 
 #define DEBUG 1
 
@@ -26,19 +26,13 @@ Button button1(BUTTON_1);
 Button button2(BUTTON_2);
 Button button3(BUTTON_3);
 
-const std::array<uint8_t, 10> leds = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
-
 volatile int8_t hallState = 0;
 
 void setup()
 {
   Serial.begin(9600);
 
-  // initialize the LED pins
-  for (uint8_t index = 0; index < leds.size(); index++)
-  {
-    //pinMode(leds[index], OUTPUT);
-  }
+  Display::initPins();
     
   pinMode(buttonStart.pin, INPUT_PULLUP);
   pinMode(button1.pin, INPUT_PULLUP);
@@ -81,18 +75,6 @@ void loop()
     delay(10);
 }
 
-void updateLeds(uint16_t pattern) // MSB -> LSB top -> bottom
-{
-    uint8_t len = leds.size();
-    for (uint8_t index = 0; index  < len; index++) // writes LSB -> MSB
-    {
-        uint8_t value = (pattern & (1 << index)) >> index;
-        digitalWrite(leds[index], value);
-        //LOG_DEBUG("index = ");
-        //LOG_DEBUG(value, BIN);
-    }
-}
-
 void ISRButtonStart()
 {
     buttonStart.onStateChange();
@@ -116,4 +98,8 @@ void ISRButton3()
 void ISRHall()
 {
     hallState = !hallState;
+    if (hallState) // a new rotation starts
+    {
+        // do stuff
+    }
 }
