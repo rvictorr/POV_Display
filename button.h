@@ -7,7 +7,7 @@ public:
     {
         return state;
     }
-    inline int8_t isHeld()
+    inline int8_t isHeldDown()
     {
         return state && (millis() - start > 750);
     }

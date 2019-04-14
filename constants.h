@@ -4,7 +4,17 @@
 
 namespace Symbols
 {
-    const uint16_t A[] = 
+	const uint16_t unsupported[] = 
+	{
+		0b1111111111,
+		0b1000000001,
+		0b1000000001,
+		0b1000000001,
+		0b1000000001,
+		0b1111111111
+	};
+
+  const uint16_t A[] = 
 	{	
 		0b0000000001,
 		0b0000000011,
@@ -25,7 +35,7 @@ namespace Symbols
 		0b0000000110,
 		0b0000000011,
 		0b0000000001
-    };
+  };
 
 	const uint16_t B[] = 
 	{	
@@ -44,7 +54,7 @@ namespace Symbols
 		0b1101110011,
 		0b0111011110,
 		0b0010001100
-    };
+  };
 
 	const uint16_t C[] = 
 	{	
@@ -66,7 +76,7 @@ namespace Symbols
 		0b1000000001,
 		0b0100000010,
 		0b0100000010
-    };
+  };
 
 	const uint16_t D[] = 
 	{	
@@ -87,7 +97,7 @@ namespace Symbols
 		0b0011001100,
 		0b0001111000,
 		0b0000110000
-    };
+  };
 
 	const uint16_t E[] = 
 	{	
@@ -105,7 +115,7 @@ namespace Symbols
 		0b1000100001,
 		0b1000100001,
 		0b1000100001
-    };
+  };
 
 	const uint16_t F[] = 
 	{	
@@ -123,7 +133,7 @@ namespace Symbols
 		0b1000100000,
 		0b1000100000,
 		0b1000100000
-    };
+  };
 
 	const uint16_t G[] = 
 	{	
@@ -145,7 +155,7 @@ namespace Symbols
 		0b1000010001,
 		0b0100001110,
 		0b0100001110
-    };
+  };
 
 	const uint16_t H[] = 
 	{	
@@ -166,7 +176,7 @@ namespace Symbols
 		0b0000100000,
 		0b1111111111,
 		0b1111111111
-    };
+  };
 
 	const uint16_t I[] = 
 	{	
@@ -186,7 +196,7 @@ namespace Symbols
 		0b0000000011,
 		0b1111111110,
 		0b1111111100
-    };
+  };
 
 	const uint16_t K[] = 
 	{	
@@ -202,7 +212,7 @@ namespace Symbols
 		0b1100000011,
 		0b1000000001,
 		0b1000000001
-    };
+  };
 
 	const uint16_t L[] = 
 	{	
@@ -220,7 +230,7 @@ namespace Symbols
 		0b0000000001,
 		0b0000000001,
 		0b0000000001
-    };
+  };
 
 	const uint16_t M[] = 
 	{	
@@ -241,7 +251,7 @@ namespace Symbols
 		0b0110000000,
 		0b0111111111,
 		0b1111111111
-    };
+  };
 
 	const uint16_t N[] = 
 	{	
@@ -259,7 +269,7 @@ namespace Symbols
 		0b0000000011,
 		0b1111111111,
 		0b1111111111
-    };
+  };
 
 	const uint16_t O[] = 
 	{	
@@ -283,7 +293,7 @@ namespace Symbols
 		0b0011001100,
 		0b0001111000,
 		0b0000110000
-    };
+  };
 
 	const uint16_t P[] = 
 	{	
@@ -301,7 +311,7 @@ namespace Symbols
 		0b0111000000,
 		0b0111000000,
 		0b0010000000
-    };
+  };
 
 // TODO implement
 // 	const uint16_t Q[] = 
@@ -343,7 +353,7 @@ namespace Symbols
 		0b0111000111,
 		0b0111000011,
 		0b0010000001
-    };
+  };
 
 	const uint16_t S[] = 
 	{	
@@ -360,7 +370,7 @@ namespace Symbols
 		0b0100010011,
 		0b0100011110,
 		0b0000001100
-    };
+  };
 
 	const uint16_t T[] = 
 	{	
@@ -385,7 +395,7 @@ namespace Symbols
 		0b1000000000,
 		0b1000000000,
 		0b1000000000
-    };
+  };
 
 	const uint16_t U[] = 
 	{	
@@ -403,7 +413,7 @@ namespace Symbols
 		0b0000000110,
 		0b1111111100,
 		0b1111111000
-    };
+  };
 
 	const uint16_t V[] = 
 	{	
@@ -426,7 +436,7 @@ namespace Symbols
 		0b0110000000,
 		0b1100000000,
 		0b1000000000
-    };
+  };
 
 	const uint16_t W[] = 
 	{	
@@ -467,7 +477,7 @@ namespace Symbols
 		0b0110000000,
 		0b1100000000,
 		0b1000000000
-    };
+  };
 
 	const uint16_t X[] = 
 	{	
@@ -491,7 +501,7 @@ namespace Symbols
 		0b1000000010,
 		0b1000000001,
 		0b0000000001
-    };
+  };
 
 // TODO implement
 
@@ -543,31 +553,269 @@ namespace Symbols
 // 0b0000000001
 //     };
 
-	const Symbol symA(A, SIZE(A), 10);
-	const Symbol symB(B, SIZE(B), 10);
-	const Symbol symC(C, SIZE(C), 10);
-	const Symbol symD(D, SIZE(D), 10);
-	const Symbol symE(E, SIZE(E), 10);
-	const Symbol symF(F, SIZE(F), 10);
-	const Symbol symG(G, SIZE(G), 10);
-	const Symbol symH(H, SIZE(H), 10);
-	const Symbol symI(I, SIZE(I), 10);
-	const Symbol symJ(J, SIZE(J), 10);
-	const Symbol symK(K, SIZE(K), 10);
-	const Symbol symL(L, SIZE(L), 10);
-	const Symbol symM(M, SIZE(M), 10);
-	const Symbol symN(N, SIZE(N), 10);
-	const Symbol symO(O, SIZE(O), 10);
-	const Symbol symP(P, SIZE(P), 10);
-	//const Symbol symQ(Q, SIZE(Q), 10);
-	const Symbol symR(R, SIZE(R), 10);
-	const Symbol symS(S, SIZE(S), 10);
-	const Symbol symT(T, SIZE(T), 10);
-	const Symbol symU(U, SIZE(U), 10);
-	const Symbol symV(V, SIZE(V), 10);
-	const Symbol symW(W, SIZE(W), 10);
-	const Symbol symX(X, SIZE(X), 10);
-	//const Symbol symY(Y, SIZE(Y), 10);
-	//const Symbol symZ(Z, SIZE(Z), 10);
+const uint16_t one[] = 
+	{	
+		0b0000100000,
+		0b0001100000,
+		0b0011000000,
+		0b0110000000,
+		0b1100000000,
+		0b1100000000,
+		0b1111111111,
+		0b1111111111
+  };
+
+	const uint16_t two[] = 
+	{	
+		0b0110000011,
+		0b1110000011,
+		0b1100000111,
+		0b1000001111,
+		0b1000001101,
+		0b1000011001,
+		0b1000010001,
+		0b1000110001,
+		0b1101100001,
+		0b1111100001,
+		0b0111000001,
+		0b0000000001
+  };
+
+	const uint16_t three[] = 
+	{	
+		0b1000000001,
+		0b1000000001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1101110011,
+		0b1111111111,
+		0b0111001110
+  };
+
+	const uint16_t four[] = 
+	{	
+		0b0000011000,
+		0b0000111000,
+		0b0001111000,
+		0b0011101000,
+		0b0111001000,
+		0b1110001000,
+		0b1100001000,
+		0b1000001000,
+		0b0000011111,
+		0b0000011111,
+		0b0000001000,
+		0b0000001000
+  };
+
+	const uint16_t five[] = 
+	{	
+		0b1111100001,
+		0b1111100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000110011,
+		0b1000111111,
+		0b0000011110
+  };
+
+	const uint16_t six[] = 
+	{	
+		0b0111111110,
+		0b1111111111,
+		0b1100110011,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000110011,
+		0b1000111111,
+		0b0000011110
+  };
+
+	const uint16_t seven[] = 
+	{	
+		0b1000000000,
+		0b1000000000,
+		0b1000000000,
+		0b1000000001,
+		0b1000000011,
+		0b1000000111,
+		0b1000001110,
+		0b1000011100,
+		0b1000111000,
+		0b1001110000,
+		0b1111100000,
+		0b1111000000,
+		0b1110000000
+  };
+
+	const uint16_t eight[] = 
+	{	
+		0b0000011110,
+		0b0111111111,
+		0b1111110001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1111110001,
+		0b0111111111,
+		0b0000011110
+  };
+
+	const uint16_t nine[] = 
+	{	
+		0b1111100001,
+		0b1111100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1000100001,
+		0b1111111111,
+		0b1111111111
+  };
+
+	const uint16_t zero[] = 
+	{	
+		0b0111111110,
+		0b1111111111,
+		0b1100000011,
+		0b1000000001,
+		0b1000000001,
+		0b1000000001,
+		0b1000000001,
+		0b1000000001,
+		0b1000000001,
+		0b1100000011,
+		0b1111111111,
+		0b0111111110
+  };
+
+	const uint16_t exclamation[] = 
+	{	
+		0b1111110011,
+		0b1111111011,
+		0b1111111011,
+		0b1111110011
+  };
+
+	const uint16_t question[] = 
+	{	
+		0b0110000000,
+		0b1110000000,
+		0b1100000000,
+		0b1000000000,
+		0b1000011011,
+		0b1000011011,
+		0b1000111011,
+		0b1000110000,
+		0b1101100000,
+		0b1111100000,
+		0b0111000000
+  };
+
+	const uint16_t dot[] = 
+	{	
+		0b0000000011,
+		0b0000000011,
+		0b0000000011,
+		0b0000000011
+  };
+
+	const uint16_t comma[] = 
+	{	
+		0b0000000001,
+		0b0000000111,
+		0b0000000111,
+		0b0000000111,
+		0b0000000111
+  };
+
+	const uint16_t colon[] = 
+	{	
+		0b0011001100,
+		0b0011001100,
+		0b0011001100,
+		0b0011001100
+  };
+
+	const uint16_t semicolon[] = 
+	{	
+		0b0000000001,
+		0b0011000111,
+		0b0011000111,
+		0b0011000111,
+		0b0011000111
+  };
+
+	const Symbol symUnsupported(unsupported, SIZE(unsupported));
+
+	// Letters
+	const Symbol symA(A, SIZE(A));
+	const Symbol symB(B, SIZE(B));
+	const Symbol symC(C, SIZE(C));
+	const Symbol symD(D, SIZE(D));
+	const Symbol symE(E, SIZE(E));
+	const Symbol symF(F, SIZE(F));
+	const Symbol symG(G, SIZE(G));
+	const Symbol symH(H, SIZE(H));
+	const Symbol symI(I, SIZE(I));
+	const Symbol symJ(J, SIZE(J));
+	const Symbol symK(K, SIZE(K));
+	const Symbol symL(L, SIZE(L));
+	const Symbol symM(M, SIZE(M));
+	const Symbol symN(N, SIZE(N));
+	const Symbol symO(O, SIZE(O));
+	const Symbol symP(P, SIZE(P));
+	//const Symbol symQ(Q, SIZE(Q));
+	const Symbol symR(R, SIZE(R));
+	const Symbol symS(S, SIZE(S));
+	const Symbol symT(T, SIZE(T));
+	const Symbol symU(U, SIZE(U));
+	const Symbol symV(V, SIZE(V));
+	const Symbol symW(W, SIZE(W));
+	const Symbol symX(X, SIZE(X));
+	//const Symbol symY(Y, SIZE(Y));
+	//const Symbol symZ(Z, SIZE(Z));
+
+	// Digits
+	const Symbol symOne(one, SIZE(one));
+	const Symbol symTwo(two, SIZE(two));
+	const Symbol symThree(three, SIZE(three));
+	const Symbol symFour(four, SIZE(four));
+	const Symbol symFive(five, SIZE(five));
+	const Symbol symSix(six, SIZE(six));
+	const Symbol symSeven(seven, SIZE(seven));
+	const Symbol symEight(eight, SIZE(eight));
+	const Symbol symNine(nine, SIZE(nine));
+	const Symbol symZero(zero, SIZE(zero));
+
+	// Various symbols
+	const Symbol symExclamation(exclamation, SIZE(exclamation));
+	const Symbol symQuestion(question, SIZE(question));
+	const Symbol symDot(dot, SIZE(dot));
+	const Symbol symComma(comma, SIZE(comma));
+	const Symbol symColon(colon, SIZE(colon));
+	const Symbol symSemicolon(semicolon, SIZE(semicolon));
+
 
 }

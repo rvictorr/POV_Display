@@ -25,13 +25,11 @@ private:
     const static std::array<uint8_t, 10> leds;
 };
 
+const Symbol& getSymbol(char sym);
+
 inline void Display::writeSymbol(char symbol)
 {
-    switch(symbol)
-    {
-        case 'A':
-        {
-            break;
-        }
-    }
+    const Symbol& toWrite = getSymbol(symbol);
+    // TODO implement logic
+    
 }

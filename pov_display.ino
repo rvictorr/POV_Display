@@ -57,7 +57,7 @@ void loop()
     
     LOG_DEBUG("-------START SERIAL-------\n");
     LOG_DEBUG("Start button: ");
-    LOG_DEBUG(buttonStart.isHeld());
+    LOG_DEBUG(buttonStart.isHeldDown());
 
     LOG_DEBUG("First button: ");
     LOG_DEBUG(button1.isDown());
