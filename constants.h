@@ -7,10 +7,10 @@ namespace Symbols
 	const uint16_t unsupported[] = 
 	{
 		0b1111111111,
-		0b1000000001,
-		0b1000000001,
-		0b1000000001,
-		0b1000000001,
+		0b1111111111,
+		0b1111111111,
+		0b1111111111,
+		0b1111111111,
 		0b1111111111
 	};
 
@@ -767,6 +767,18 @@ const uint16_t one[] =
 		0b0011000111
   };
 
+	const uint16_t space[] = 
+	{
+		0b0000000000,
+		0b0000000000,
+		0b0000000000,
+		0b0000000000,
+		0b0000000000,
+		0b0000000000,
+		0b0000000000,
+		0b0000000000
+	};
+
 	const Symbol symUnsupported(unsupported, SIZE(unsupported));
 
 	// Letters
@@ -816,6 +828,6 @@ const uint16_t one[] =
 	const Symbol symComma(comma, SIZE(comma));
 	const Symbol symColon(colon, SIZE(colon));
 	const Symbol symSemicolon(semicolon, SIZE(semicolon));
-
+	const Symbol symSpace(space, SIZE(space));
 
 }

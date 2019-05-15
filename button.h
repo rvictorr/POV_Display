@@ -1,4 +1,3 @@
-
 class Button
 {
 public:
@@ -16,8 +15,9 @@ public:
         state = !state;
         start = millis();
     }
+
 public:
     volatile int8_t state;
-    volatile long start; 
+    volatile long start;
     int8_t pin;
 };
