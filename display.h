@@ -28,24 +28,26 @@ public:
         }
     }
 
-    // TESTING BUFFERS
+    static void setPersist(uint8_t shouldPersist);
     static void onStartRotation(uint16_t lastRotationDuration);
     static void onTimerOverflow();
     static void submitString(const std::string &string, uint8_t centered);
 
 private:
     Display();
-    static void writeString();
+    static void writeBuffer();
+    static void writeString(const SymbolString& toWrite);
     static void writeSymbol(const Symbol *symbol);
     static void writeColumn(uint16_t pattern);
+    static void calculateStartPosition(const SymbolString& symString, uint8_t centered);
 
 private:
     static const std::array<uint8_t, 10> leds; // later maybe convert the length to a template argument
 
+    static uint8_t persist;
     static uint16_t degree;
     static uint16_t delta;
     static uint16_t startPos;
-    // static std::vector<const Symbol *> buffer;
     static std::vector<SymbolString> buffer;
 };
 
@@ -55,16 +57,11 @@ inline void Display::onStartRotation(uint16_t lastRotationDuration)
     degree = lastRotationDuration / 360;
     delta = degree / 4; // resolution = 0.25 degrees
     
-    // LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
+    LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
 
-    if (startPos != 0) // startPos is initialized
-    {
-        // Timer1.initialize(startPos); // piece of shit
-        delayMicroseconds(startPos);
-        Display::writeString();
+    Display::writeBuffer();
 
-        // LOG_DEBUG("TIMER INITIALIZED");
-    }
+    LOG_DEBUG("TIMER INITIALIZED");
 }
 
 inline void Display::onTimerOverflow()
@@ -72,42 +69,57 @@ inline void Display::onTimerOverflow()
     // start drawing
     LOG_DEBUG("Timer overflow");
     // Timer1.stop();
-    Display::writeString();
+    Display::writeBuffer();
 }
 
 inline void Display::submitString(const std::string &string, uint8_t centered = true)
 {
     LOG_DEBUG("Submitting string %s", string.c_str());
 
-    SymbolString symString(string);
+    SymbolString symString(string, centered);
     buffer.emplace_back(symString);
-
-    uint16_t width = symString.width * delta; // width of the string, in time units
-    
-    LOG_DEBUG("string width = %d", width);
 
     // calculate where to start drawing
     // baseline is 120 degrees
-    startPos = centered ? (180 * degree - (int16_t)width / 2) : 120 * degree;
+    if (delta != 0)
+        calculateStartPosition(symString, centered);
 }
 
-inline void Display::writeString()
+inline void Display::writeBuffer() // doesn't work properly yet
 {
     if (buffer.size() == 0)
+    {
+        writeColumn(0); // clear the display
         return;
-    
+    }
+
+    for (auto toWrite : buffer)
+    {
+        Display::writeString(toWrite);
+
+        if (!persist)
+        {    
+            // pop the string that was drawn on the display
+            buffer.pop_back();
+        }
+    }
+}
+
+inline void Display::writeString(const SymbolString& toWrite)
+{    
     LOG_DEBUG("writeString called");
 
-    const SymbolString& toWrite = buffer.back();
+    if (startPos == 0)
+        calculateStartPosition(toWrite, toWrite.centered);
+
+    // Timer1.initialize(startPos); // piece of shit
+    delayMicroseconds(startPos); // TODO: might need to compensate for the time spent executing the above instructions
 
     for (const auto *symbol : toWrite.elements)
     {
         Display::writeSymbol(symbol);
         delayMicroseconds((uint16_t)floor(delta * 3)); // character spacing
     }
-
-    // pop the string that was written
-    buffer.pop_back();
 }
 
 inline void Display::writeSymbol(const Symbol *symbol)
@@ -116,6 +128,7 @@ inline void Display::writeSymbol(const Symbol *symbol)
     {
         Display::writeColumn(symbol->data[index]);
         delayMicroseconds((uint16_t)floor(delta));
+        // delay(delta*3); // for testing purposes
         // LOG_DEBUG("index = %d, delta = %d", index, delta);
     }
 }
@@ -130,6 +143,16 @@ inline void Display::writeColumn(uint16_t pattern)
         //LOG_DEBUG("value = ");
         //LOG_DEBUG(value, BIN);
     }
+}
+
+inline void Display::calculateStartPosition(const SymbolString& symString, uint8_t centered)
+{
+    startPos = centered ? (180 * degree - (int16_t)(symString.width * delta / 2)) : 120 * degree;
+}
+
+inline void Display::setPersist(uint8_t shouldPersist)
+{
+    persist = shouldPersist;
 }
 
 #endif

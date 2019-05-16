@@ -38,16 +38,18 @@ void setup()
 
     //Display::writeColumn(0b1111100000);
     //Display::submitString("A");
+    Display::submitString("A   B   C   D   ");
+    Display::submitString("    .    .    .");
 }
 
 void loop()
 {
-     if (timesToWait == 0)
-    {
-        timesToWait = 20;
-        Display::submitString("A   B   C   D   ");
-        Display::submitString("       .       .        .");
-    }
+    // if (timesToWait == 0)
+    // {
+    //     timesToWait = 20;
+    //     Display::submitString("A   B   C   D   ");
+    //     Display::submitString("       .       .        .");
+    // }
     //Display::writeSymbol('O');
 
     // LOG_DEBUG("-------START SERIAL-------\n");
