@@ -11,23 +11,16 @@ Button button2(BUTTON_2);
 Button button3(BUTTON_3);
 
 volatile int8_t hallState = 0;
-//volatile int8_t timerState = 0;
-//volatile int16_t timerPeriod = 0;
 volatile int16_t lastRotationStart = 0;
 volatile int16_t lastRotationDuration = 0;
-//volatile int16_t minResolutionPeriod = 0;
 
-
-int timesToWait = 10;
+int timesToWait = 20;
 
 void setup()
 {
     Serial.begin(9600);
 
     Display::init();
-
-    //Display::setResolution(1500000);
-    //Display::setResolution(2000.0f);
 
     pinMode(buttonStart.pin, INPUT_PULLUP);
     pinMode(button1.pin, INPUT_PULLUP);
@@ -49,10 +42,11 @@ void setup()
 
 void loop()
 {
-    if (timesToWait == 0)
+     if (timesToWait == 0)
     {
-        timesToWait = 10;
-        Display::submitString("A");
+        timesToWait = 20;
+        Display::submitString("A   B   C   D   ");
+        Display::submitString("       .       .        .");
     }
     //Display::writeSymbol('O');
 
@@ -72,7 +66,7 @@ void loop()
     // LOG_DEBUG("Hall state: ");
     // LOG_DEBUG(hallState);
 
-    Display::onStartRotation(33333); //5 seconds
+    Display::onStartRotation(33333);
     timesToWait--;
 
     // delay(5000);

@@ -1,12 +1,15 @@
+#ifndef DISPLAY_H
+#define DISPLAY_H
+
 #include <array>
 #include <vector>
 #include <cmath>
 
 #include <Arduino.h>
-#include <TimerOne.h>
 
 #include "common.h"
 #include "constants.h"
+#include "symbolstring.h"
 
 const Symbol *getSymbol(char sym);
 
@@ -17,7 +20,7 @@ class Display
 public:
     static void init()
     {
-        Timer1.attachInterrupt(ISRTimer);
+        // Timer1.attachInterrupt(ISRTimer); //piece of shit
         // initialize the LED pins
         for (uint8_t index = 0; index < leds.size(); index++)
         {
@@ -42,7 +45,8 @@ private:
     static uint16_t degree;
     static uint16_t delta;
     static uint16_t startPos;
-    static std::vector<const Symbol *> buffer;
+    // static std::vector<const Symbol *> buffer;
+    static std::vector<SymbolString> buffer;
 };
 
 inline void Display::onStartRotation(uint16_t lastRotationDuration)
@@ -51,12 +55,15 @@ inline void Display::onStartRotation(uint16_t lastRotationDuration)
     degree = lastRotationDuration / 360;
     delta = degree / 4; // resolution = 0.25 degrees
     
-    LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
+    // LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
 
     if (startPos != 0) // startPos is initialized
     {
-        Timer1.initialize(startPos);
-        LOG_DEBUG("TIMER INITIALIZED");
+        // Timer1.initialize(startPos); // piece of shit
+        delayMicroseconds(startPos);
+        Display::writeString();
+
+        // LOG_DEBUG("TIMER INITIALIZED");
     }
 }
 
@@ -64,46 +71,43 @@ inline void Display::onTimerOverflow()
 {
     // start drawing
     LOG_DEBUG("Timer overflow");
-    Timer1.stop();
+    // Timer1.stop();
     Display::writeString();
 }
 
 inline void Display::submitString(const std::string &string, uint8_t centered = true)
 {
-    if (buffer.size() > 0) // TODO: implement a proper buffer
-        return;
+    LOG_DEBUG("Submitting string %s", string.c_str());
 
-    LOG_DEBUG("String submitted");
-    buffer.reserve(string.length());
-    uint16_t width = 0; // width of the string, in time units
-    // convert to our representation
-    for (char c : string)
-    {
-        const Symbol *symbol = getSymbol(c);
-        buffer.push_back(symbol);
-        width += symbol->width;
-    }
-    width *= delta;
+    SymbolString symString(string);
+    buffer.emplace_back(symString);
+
+    uint16_t width = symString.width * delta; // width of the string, in time units
+    
     LOG_DEBUG("string width = %d", width);
 
     // calculate where to start drawing
     // baseline is 120 degrees
-    //startPos = centered ? (180 * degree - (int16_t)width / 2) : 120 * degree;
-    //startPos = (180 * degree - (int16_t)width / 2);
-    startPos = degree;
+    startPos = centered ? (180 * degree - (int16_t)width / 2) : 120 * degree;
 }
 
 inline void Display::writeString()
 {
+    if (buffer.size() == 0)
+        return;
+    
     LOG_DEBUG("writeString called");
-    for (const auto symbol : buffer)
+
+    const SymbolString& toWrite = buffer.back();
+
+    for (const auto *symbol : toWrite.elements)
     {
         Display::writeSymbol(symbol);
         delayMicroseconds((uint16_t)floor(delta * 3)); // character spacing
     }
 
-    // clear the buffer
-    buffer.clear(); //TODO: uncomment
+    // pop the string that was written
+    buffer.pop_back();
 }
 
 inline void Display::writeSymbol(const Symbol *symbol)
@@ -112,8 +116,7 @@ inline void Display::writeSymbol(const Symbol *symbol)
     {
         Display::writeColumn(symbol->data[index]);
         delayMicroseconds((uint16_t)floor(delta));
-        //delay((uint16_t) floor(delta)); // TODO: remove, temporary
-        LOG_DEBUG("index = %d, delta = %d", index, delta);
+        // LOG_DEBUG("index = %d, delta = %d", index, delta);
     }
 }
 
@@ -128,3 +131,5 @@ inline void Display::writeColumn(uint16_t pattern)
         //LOG_DEBUG(value, BIN);
     }
 }
+
+#endif

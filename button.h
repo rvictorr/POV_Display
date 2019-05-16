@@ -1,12 +1,15 @@
+#ifndef BUTTON_H
+#define BUTTON_H
+
 class Button
 {
 public:
     Button(uint8_t pin) : pin(pin), state(0) {}
-    inline int8_t isDown()
+    inline uint8_t isDown()
     {
         return state;
     }
-    inline int8_t isHeldDown()
+    inline uint8_t isHeldDown()
     {
         return state && (millis() - start > 750);
     }
@@ -17,7 +20,9 @@ public:
     }
 
 public:
-    volatile int8_t state;
+    volatile uint8_t state;
     volatile long start;
-    int8_t pin;
+    uint8_t pin;
 };
+
+#endif

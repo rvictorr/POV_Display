@@ -1,6 +1,8 @@
-#include "symbol.h"
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
-#define SIZE(x) sizeof(x)/sizeof(x[0])
+#include "common.h"
+#include "symbol.h"
 
 namespace Symbols
 {
@@ -831,3 +833,5 @@ const uint16_t one[] =
 	const Symbol symSpace(space, SIZE(space));
 
 }
+
+#endif
