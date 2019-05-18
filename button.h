@@ -4,7 +4,7 @@
 class Button
 {
 public:
-    Button(uint8_t pin) : pin(pin), state(0) {}
+    Button(const uint8_t pin) : pin(pin), state(0) {}
     inline uint8_t isDown()
     {
         return state;
@@ -13,16 +13,20 @@ public:
     {
         return state && (millis() - start > 750);
     }
-    inline void onStateChange()
+    virtual void onStateChange() 
+    {
+        onStateChangeInternal();
+    }
+private:
+    inline void onStateChangeInternal()
     {
         state = !state;
         start = millis();
     }
-
 public:
     volatile uint8_t state;
     volatile long start;
-    uint8_t pin;
+    const uint8_t pin;
 };
 
 #endif

@@ -3,16 +3,17 @@
 #include "common.h"
 
 #include "button.h"
+#include "buttons.h"
 #include "display.h"
 
-Button buttonStart(BUTTON_START);
-Button button1(BUTTON_1);
-Button button2(BUTTON_2);
-Button button3(BUTTON_3);
+// Button buttonStart(BUTTON_START);
+HelloWorldButton helloWorldButton(BUTTON_1);
+VictorButton victorButton(BUTTON_2);
+RaduButton raduButton(BUTTON_3);
 
 volatile int8_t hallState = 0;
-volatile int16_t lastRotationStart = 0;
-volatile int16_t lastRotationDuration = 0;
+volatile int32_t lastRotationStart = 0;
+volatile int32_t lastRotationDuration = 0;
 
 int timesToWait = 20;
 
@@ -22,78 +23,60 @@ void setup()
 
     Display::init();
 
-    pinMode(buttonStart.pin, INPUT_PULLUP);
-    pinMode(button1.pin, INPUT_PULLUP);
-    pinMode(button2.pin, INPUT_PULLUP);
-    pinMode(button3.pin, INPUT_PULLUP);
+    // pinMode(buttonStart.pin, INPUT_PULLUP);
+    pinMode(helloWorldButton.pin, INPUT_PULLUP);
+    pinMode(victorButton.pin, INPUT_PULLUP);
+    pinMode(raduButton.pin, INPUT_PULLUP);
     pinMode(HALL_SENSOR, INPUT);
 
     hallState = !digitalRead(HALL_SENSOR); // establish the initial state, which can be 1 if the magnet is stopped near the sensor
 
-    attachInterrupt(buttonStart.pin, ISRButtonStart, CHANGE);
-    attachInterrupt(button1.pin, ISRButton1, CHANGE);
-    attachInterrupt(button2.pin, ISRButton2, CHANGE);
-    attachInterrupt(button3.pin, ISRButton3, CHANGE);
+    // attachInterrupt(buttonStart.pin, ISRButtonStart, CHANGE);
+    attachInterrupt(helloWorldButton.pin, ISRButtonHelloWorld, CHANGE);
+    attachInterrupt(victorButton.pin, ISRButtonVictor, CHANGE);
+    attachInterrupt(raduButton.pin, ISRButtonRadu, CHANGE);
     attachInterrupt(HALL_SENSOR, ISRHall, CHANGE);
 
-    //Display::writeColumn(0b1111100000);
-    //Display::submitString("A");
-    Display::submitString("A   B   C   D   ");
-    Display::submitString("    .    .    .");
+    // Display::submitString("A   B   C   D   ");
+    // Display::submitString("    .    .    .");
+    Display::submitString("Hello World!", 0);
+    Display::submitString("Victor Rusu", 1);
+    Display::submitString("Radu Deleanu", 2);
 }
 
 void loop()
 {
-    // if (timesToWait == 0)
-    // {
-    //     timesToWait = 20;
-    //     Display::submitString("A   B   C   D   ");
-    //     Display::submitString("       .       .        .");
-    // }
-    //Display::writeSymbol('O');
-
-    // LOG_DEBUG("-------START SERIAL-------\n");
-    // LOG_DEBUG("Start button: ");
-    // LOG_DEBUG(buttonStart.isHeldDown());
-
-    // LOG_DEBUG("First button: ");
-    // LOG_DEBUG(button1.isDown());
-
-    // LOG_DEBUG("Second button: ");
-    // LOG_DEBUG(button2.isDown());
-
-    // LOG_DEBUG("Third button: ");
-    // LOG_DEBUG(button3.isDown());
+    uint32_t start = micros();
 
     // LOG_DEBUG("Hall state: ");
     // LOG_DEBUG(hallState);
 
-    Display::onStartRotation(33333);
-    timesToWait--;
+    Display::onStartRotation(50000);
+    uint32_t waitTime = micros() - start;
 
     // delay(5000);
 
-    delay(35);
+    delayMicroseconds(waitTime);
 }
 
 void ISRButtonStart()
 {
-    buttonStart.onStateChange();
+    // buttonStart.onStateChange();
 }
 
-void ISRButton1()
+void ISRButtonHelloWorld()
 {
-    button1.onStateChange();
+    helloWorldButton.onStateChange();
 }
 
-void ISRButton2()
+void ISRButtonVictor()
 {
-    button2.onStateChange();
+    victorButton.onStateChange();
 }
 
-void ISRButton3()
+void ISRButtonRadu()
 {
-    button3.onStateChange();
+    raduButton.onStateChange();
 }
 
 void ISRHall()
@@ -104,6 +87,7 @@ void ISRHall()
         lastRotationDuration = micros() - lastRotationStart;
         lastRotationStart = micros();
 
-        // Display::onStartRotation(lastRotationDuration); // TODO: uncomment after fixing the wiring
+        if (lastRotationDuration < 62500) // ~1000rpm, 16rps, 62.5ms, 62500 us - in order to achieve persistence of vision
+            Display::onStartRotation(lastRotationDuration); // TODO: uncomment after fixing the wiring
     }
 }

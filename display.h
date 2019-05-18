@@ -1,13 +1,12 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include "common.h"
+
 #include <array>
 #include <vector>
 #include <cmath>
 
-#include <Arduino.h>
-
-#include "common.h"
 #include "constants.h"
 #include "symbolstring.h"
 
@@ -28,10 +27,15 @@ public:
         }
     }
 
-    static void setPersist(uint8_t shouldPersist);
-    static void onStartRotation(uint16_t lastRotationDuration);
+    static void onStartRotation(uint32_t lastRotationDuration);
     static void onTimerOverflow();
-    static void submitString(const std::string &string, uint8_t centered);
+    static void submitString(const std::string &string, uint8_t centered, int8_t index);
+    static void setBufferIndex(uint8_t index)
+    {
+        LOG_DEBUG("Setting buffer index to %d", index);
+        if (bufferIndex < buffer.size())
+            bufferIndex = index;
+    }
 
 private:
     Display();
@@ -44,24 +48,28 @@ private:
 private:
     static const std::array<uint8_t, 10> leds; // later maybe convert the length to a template argument
 
-    static uint8_t persist;
     static uint16_t degree;
     static uint16_t delta;
-    static uint16_t startPos;
+    static uint32_t startPos;
     static std::vector<SymbolString> buffer;
+    static uint8_t bufferIndex;
+
+    static uint32_t rotationStartMicros;
+    static uint32_t timeLost;
 };
 
-inline void Display::onStartRotation(uint16_t lastRotationDuration)
+inline void Display::onStartRotation(uint32_t lastRotationDuration)
 {
+    rotationStartMicros = micros();
     // setup timer here
     degree = lastRotationDuration / 360;
     delta = degree / 4; // resolution = 0.25 degrees
     
-    LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
+    // LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
 
-    Display::writeBuffer();
-
-    LOG_DEBUG("TIMER INITIALIZED");
+    // LOG_DEBUG("TIMER INITIALIZED");
+    
+    writeBuffer();
 }
 
 inline void Display::onTimerOverflow()
@@ -69,20 +77,22 @@ inline void Display::onTimerOverflow()
     // start drawing
     LOG_DEBUG("Timer overflow");
     // Timer1.stop();
-    Display::writeBuffer();
+    writeBuffer();
 }
 
-inline void Display::submitString(const std::string &string, uint8_t centered = true)
+inline void Display::submitString(const std::string &string, uint8_t centered = true, int8_t index = -1)
 {
-    LOG_DEBUG("Submitting string %s", string.c_str());
+    LOG_INFO("Submitting string %s", string.c_str());
 
     SymbolString symString(string, centered);
-    buffer.emplace_back(symString);
+    
+    if (buffer.size() > 5) // buffer capacity 5, probably temporary
+        buffer.pop_back();
 
-    // calculate where to start drawing
-    // baseline is 120 degrees
-    if (delta != 0)
-        calculateStartPosition(symString, centered);
+    if (index < 0)
+        buffer.emplace_back(symString);
+    else
+        buffer.emplace(buffer.begin() + index, symString);
 }
 
 inline void Display::writeBuffer() // doesn't work properly yet
@@ -93,31 +103,36 @@ inline void Display::writeBuffer() // doesn't work properly yet
         return;
     }
 
-    for (auto toWrite : buffer)
-    {
-        Display::writeString(toWrite);
+    writeString(buffer[bufferIndex]);
 
-        if (!persist)
-        {    
-            // pop the string that was drawn on the display
-            buffer.pop_back();
-        }
-    }
+    writeColumn(0);
 }
 
 inline void Display::writeString(const SymbolString& toWrite)
 {    
-    LOG_DEBUG("writeString called");
+    LOG_INFO("writeString: writing string %s", toWrite.cppString.c_str());
 
-    if (startPos == 0)
+    // calculate where to start drawing
+    // baseline is 120 degrees
+    if (delta != 0)
         calculateStartPosition(toWrite, toWrite.centered);
 
     // Timer1.initialize(startPos); // piece of shit
-    delayMicroseconds(startPos); // TODO: might need to compensate for the time spent executing the above instructions
+    
+    timeLost = micros() - rotationStartMicros;
+    
+    if (((int32_t)startPos - (int32_t)timeLost) > 0)
+        startPos = startPos - timeLost;
+    else
+        startPos = 0; // start drawing immediately if we lose too much time
+
+    LOG_DEBUG("Time lost: %d, new startPos: %d", timeLost, startPos);
+    delayMicroseconds(startPos); // compensate for the time spent executing the above instructions
 
     for (const auto *symbol : toWrite.elements)
     {
-        Display::writeSymbol(symbol);
+        writeSymbol(symbol);
+        writeColumn(0);
         delayMicroseconds((uint16_t)floor(delta * 3)); // character spacing
     }
 }
@@ -148,11 +163,6 @@ inline void Display::writeColumn(uint16_t pattern)
 inline void Display::calculateStartPosition(const SymbolString& symString, uint8_t centered)
 {
     startPos = centered ? (180 * degree - (int16_t)(symString.width * delta / 2)) : 120 * degree;
-}
-
-inline void Display::setPersist(uint8_t shouldPersist)
-{
-    persist = shouldPersist;
 }
 
 #endif

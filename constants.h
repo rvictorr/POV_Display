@@ -2,6 +2,7 @@
 #define CONSTANTS_H
 
 #include "common.h"
+
 #include "symbol.h"
 
 namespace Symbols
