@@ -63,7 +63,7 @@ inline void Display::onStartRotation(uint32_t lastRotationDuration)
     rotationStartMicros = micros();
     // setup timer here
     degree = lastRotationDuration / 360;
-    delta = degree / 4; // resolution = 0.25 degrees
+    delta = degree / 16; // resolution = 0.25 degrees
     
     // LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
 
@@ -129,9 +129,10 @@ inline void Display::writeString(const SymbolString& toWrite)
     LOG_DEBUG("Time lost: %d, new startPos: %d", timeLost, startPos);
     delayMicroseconds(startPos); // compensate for the time spent executing the above instructions
 
-    for (const auto *symbol : toWrite.elements)
+    // for (const auto *symbol : toWrite.elements)
+    for (uint8_t i = buffer.size() - 1; i >= 0; i--)
     {
-        writeSymbol(symbol);
+        writeSymbol(toWrite[i]);
         writeColumn(0);
         delayMicroseconds((uint16_t)floor(delta * 3)); // character spacing
     }
@@ -139,7 +140,7 @@ inline void Display::writeString(const SymbolString& toWrite)
 
 inline void Display::writeSymbol(const Symbol *symbol)
 {
-    for (uint8_t index = 0; index < symbol->width; index++)
+    for (uint8_t index = symbol->width - 1; index >= 0; index--)
     {
         Display::writeColumn(symbol->data[index]);
         delayMicroseconds((uint16_t)floor(delta));
