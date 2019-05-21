@@ -8,8 +8,9 @@
 struct Symbol
 {
     Symbol() : Symbol({}, 0) {}
-    Symbol(const uint16_t *data, uint8_t width, uint8_t height = SYMBOL_HEIGHT) : data(data), width(width), height(height) {}
+    Symbol(const uint16_t *data, uint8_t width, uint8_t height = SYMBOL_HEIGHT) : data(data), character(110), width(width), height(height) {}
     const uint16_t *data;
+    char character;
     uint8_t width, height;
 };
 

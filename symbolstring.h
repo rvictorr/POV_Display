@@ -1,8 +1,11 @@
 #ifndef SYMBOLSTRING_H
 #define SYMBOLSTRING_H
 
+#include "common.h"
 #include "symbol.h"
-#include "string"
+
+#include <string>
+#include <vector>
 
 struct SymbolString
 {
@@ -18,8 +21,11 @@ struct SymbolString
     }
     SymbolString& operator=(const SymbolString& other) 
     {
-        SymbolString newString(other.cppString, other.centered);
-        return newString;
+        cppString = other.cppString;
+        centered = other.centered;
+        width = other.width;
+        elements = other.elements;
+        return *this;
     }
     
     void insert(const Symbol* symbol)
@@ -33,7 +39,7 @@ struct SymbolString
     }
 
     std::vector<const Symbol*> elements;
-    const std::string cppString;
+    std::string cppString;
     uint8_t width;
     uint8_t centered;
 };

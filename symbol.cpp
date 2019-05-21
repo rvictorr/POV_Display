@@ -258,5 +258,6 @@ const Symbol *getSymbol(char sym)
         break;
     }
     }
+    const_cast<Symbol*>(symbol)->character = sym;
     return symbol;
 }

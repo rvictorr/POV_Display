@@ -3,12 +3,13 @@
 
 #include "common.h"
 
+#include "constants.h"
+#include "symbolstring.h"
+
+#include <algorithm>
 #include <array>
 #include <vector>
 #include <cmath>
-
-#include "constants.h"
-#include "symbolstring.h"
 
 const Symbol *getSymbol(char sym);
 
@@ -19,7 +20,7 @@ class Display
 public:
     static void init()
     {
-        // Timer1.attachInterrupt(ISRTimer); //piece of shit
+        // Timer1.attachInterrupt(ISRTimer);
         // initialize the LED pins
         for (uint8_t index = 0; index < leds.size(); index++)
         {
@@ -63,7 +64,7 @@ inline void Display::onStartRotation(uint32_t lastRotationDuration)
     rotationStartMicros = micros();
     // setup timer here
     degree = lastRotationDuration / 360;
-    delta = degree / 16; // resolution = 0.25 degrees
+    delta = degree / 4; // resolution = 0.25 degrees
     
     // LOG_DEBUG("onStartRotation, lastRotationDuration = %d, degree = %d, delta = %d, startPos = %d", lastRotationDuration, degree, delta, startPos);
 
@@ -82,17 +83,20 @@ inline void Display::onTimerOverflow()
 
 inline void Display::submitString(const std::string &string, uint8_t centered = true, int8_t index = -1)
 {
-    LOG_INFO("Submitting string %s", string.c_str());
+    LOG_INFO("Submitting string %s at buffer index %d", string.c_str(), index);
 
     SymbolString symString(string, centered);
-    
+
     if (buffer.size() > 5) // buffer capacity 5, probably temporary
         buffer.pop_back();
 
     if (index < 0)
         buffer.emplace_back(symString);
     else
-        buffer.emplace(buffer.begin() + index, symString);
+    {
+        auto it = buffer.begin() + index;
+        *it = symString;
+    }
 }
 
 inline void Display::writeBuffer() // doesn't work properly yet
@@ -110,14 +114,12 @@ inline void Display::writeBuffer() // doesn't work properly yet
 
 inline void Display::writeString(const SymbolString& toWrite)
 {    
-    LOG_INFO("writeString: writing string %s", toWrite.cppString.c_str());
-
     // calculate where to start drawing
     // baseline is 120 degrees
     if (delta != 0)
         calculateStartPosition(toWrite, toWrite.centered);
 
-    // Timer1.initialize(startPos); // piece of shit
+    // Timer1.initialize(startPos);
     
     timeLost = micros() - rotationStartMicros;
     
@@ -130,21 +132,23 @@ inline void Display::writeString(const SymbolString& toWrite)
     delayMicroseconds(startPos); // compensate for the time spent executing the above instructions
 
     // for (const auto *symbol : toWrite.elements)
-    for (uint8_t i = buffer.size() - 1; i >= 0; i--)
+    for (int8_t i = toWrite.elements.size() - 1; i >= 0; i--)
     {
-        writeSymbol(toWrite[i]);
+        LOG_DEBUG("Crash test, char = %c, i = %d", toWrite.elements[i]->character, i);
+        writeSymbol(toWrite.elements[i]);
+        // writeSymbol(symbol);
         writeColumn(0);
-        delayMicroseconds((uint16_t)floor(delta * 3)); // character spacing
+        delayMicroseconds(delta * 3); // character spacing
     }
 }
 
 inline void Display::writeSymbol(const Symbol *symbol)
 {
-    for (uint8_t index = symbol->width - 1; index >= 0; index--)
+    for (int8_t index = symbol->width-1; index >= 0; index--)
+    // for (uint8_t index = 0; index < symbol->width; index++)
     {
         Display::writeColumn(symbol->data[index]);
-        delayMicroseconds((uint16_t)floor(delta));
-        // delay(delta*3); // for testing purposes
+        delayMicroseconds(delta);
         // LOG_DEBUG("index = %d, delta = %d", index, delta);
     }
 }
@@ -163,7 +167,8 @@ inline void Display::writeColumn(uint16_t pattern)
 
 inline void Display::calculateStartPosition(const SymbolString& symString, uint8_t centered)
 {
-    startPos = centered ? (180 * degree - (int16_t)(symString.width * delta / 2)) : 120 * degree;
+    startPos = centered ? (90 * degree - (int16_t)(symString.width * delta / 2)) : 30 * degree;
+    // startPos = 30 * degree; //TODO: remove, temporary
 }
 
 #endif
